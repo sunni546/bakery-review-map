@@ -16,3 +16,15 @@ class User(db.Model):
     def __repr__(self):
         return (f"User(id={self.id!r}, email={self.email!r}, password={self.password!r}, nickname={self.nickname!r}, "
                 f"image={self.image!r}, point={self.point!r})")
+
+
+class Level(db.Model):
+    __tablename__ = 'levels'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), unique=True, nullable=False)
+    point = db.Column(db.Integer, unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"Level(id={self.id!r}, name={self.name!r}, point={self.point!r})"
+    
