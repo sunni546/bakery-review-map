@@ -27,4 +27,13 @@ class Level(db.Model):
 
     def __repr__(self):
         return f"Level(id={self.id!r}, name={self.name!r}, point={self.point!r})"
-    
+
+
+class Category(db.Model):
+    __tablename__ = 'categories'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"Category(id={self.id!r}, name={self.name!r})"
