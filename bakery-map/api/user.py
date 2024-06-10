@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_restx import Namespace, Resource
 
+from api.level import get_level, get_level_name
 from models import db, User
 from my_jwt import create_token, validate_token, get_user_id
 
@@ -25,7 +26,8 @@ class UserR(Resource):
               "email": "email1@naver.com",
               "nickname": "nickname1",
               "image": "image1",
-              "point": 0
+              "point": 0,
+              "level_name": "초심자"
             }
         """
         token = request.headers.get('Authorization')
@@ -44,7 +46,8 @@ class UserR(Resource):
                 'email': user.email,
                 'nickname': user.nickname,
                 'image': user.image,
-                'point': user.point
+                'point': user.point,
+                'level_name': get_level_name(user.level_id)
             }
 
         except Exception as e:
@@ -90,7 +93,7 @@ class Join(Resource):
             else:
                 password_hash = bcrypt.generate_password_hash(password)
 
-                user = User(email=email, password=password_hash, nickname=nickname)
+                user = User(email=email, password=password_hash, nickname=nickname, level_id=get_level())
 
                 db.session.add(user)
                 db.session.commit()

@@ -13,9 +13,12 @@ class User(db.Model):
     image = db.Column(db.String(255))
     point = db.Column(db.Integer, default=0)
 
+    level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
+    level = db.relationship("Level", back_populates="users")
+
     def __repr__(self):
         return (f"User(id={self.id!r}, email={self.email!r}, password={self.password!r}, nickname={self.nickname!r}, "
-                f"image={self.image!r}, point={self.point!r})")
+                f"image={self.image!r}, point={self.point!r}, level_id={self.level_id!r})")
 
 
 class Level(db.Model):
@@ -24,6 +27,8 @@ class Level(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
     point = db.Column(db.Integer, unique=True, nullable=False)
+
+    users = db.relationship("User", back_populates="level")
 
     def __repr__(self):
         return f"Level(id={self.id!r}, name={self.name!r}, point={self.point!r})"
