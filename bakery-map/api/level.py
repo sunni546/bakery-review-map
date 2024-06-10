@@ -191,3 +191,28 @@ def make_result(level):
     }
 
     return result
+
+
+def get_level(user_point=0):
+    print(user_point)
+
+    try:
+        level = (Level.query.filter(Level.point <= user_point).order_by(Level.point.desc())
+                 .with_entities(Level.id).first())
+
+        return level.id
+
+    except Exception as e:
+        print(e)
+
+
+def get_level_name(level_id):
+    print(level_id)
+
+    try:
+        level = db.session.get(Level, level_id)
+
+        return level.name
+
+    except Exception as e:
+        print(e)
