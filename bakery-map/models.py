@@ -45,9 +45,26 @@ class Bakery(db.Model):
     score = db.Column(db.Float, default=0)
     review_number = db.Column(db.Integer, default=0)
 
+    breads = db.relationship("Bread", back_populates="bakery")
+
     def __repr__(self):
         return (f"Bakery(id={self.id!r}, name={self.name!r}, address={self.address!r}, "
                 f"lat={self.lat!r}, lng={self.lng!r}, score={self.score!r}, review_number={self.review_number!r})")
+
+
+class Bread(db.Model):
+    __tablename__ = 'breads'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id'))
+    bakery = db.relationship("Bakery", back_populates="breads")
+
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    category = db.relationship("Category", back_populates="breads")
+
+    def __repr__(self):
+        return f"Bread(id={self.id!r}, bakery_id={self.bakery_id!r}, category_id={self.category_id!r})"
 
 
 class Category(db.Model):
@@ -55,6 +72,8 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
+
+    breads = db.relationship("Bread", back_populates="category")
 
     def __repr__(self):
         return f"Category(id={self.id!r}, name={self.name!r})"

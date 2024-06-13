@@ -177,3 +177,14 @@ def make_result(category):
     }
 
     return result
+
+
+def get_category_name(category_id):
+    print(category_id)
+
+    try:
+        category = db.session.get(Category, category_id)
+        return category.name
+
+    except Exception as e:
+        print(e)
