@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
+from api.bread import get_breads
 from models import Bakery, db
 
 Bakery_api = Namespace(name='Bakery_api', description="API for managing bakeries")
@@ -62,7 +63,8 @@ class BakeryCR(Resource):
               "lat": 37.5008651,
               "lng": 126.7758115,
               "score": 0,
-              "review_number": 0
+              "review_number": 0,
+              "breads": []
             }
         """
         name = request.json.get('name')
@@ -102,7 +104,11 @@ class BakeryRUD(Resource):
               "name": "파리바게뜨 부천중동로데오점",
               "address": "경기 부천시 원미구 소향로 251",
               "score": 0,
-              "review_number": 0
+              "review_number": 0,
+              "breads": [
+                "베이글",
+                "소금빵"
+              ]
             }
         """
         print(id)
@@ -139,7 +145,10 @@ class BakeryRUD(Resource):
               "lat": 37.4954714,
               "lng": 126.7763733,
               "score": 0,
-              "review_number": 0
+              "review_number": 0,
+              "breads": [
+                "소금빵"
+              ]
             }
         """
         name = request.json.get('name')
@@ -219,7 +228,11 @@ class BakeryR(Resource):
               "name": "파리바게뜨 부천중동로데오점",
               "address": "경기 부천시 원미구 소향로 251",
               "score": 0,
-              "review_number": 0
+              "review_number": 0,
+              "breads": [
+                "베이글",
+                "소금빵"
+              ]
             }
         """
         lat = request.json.get('lat')
@@ -248,6 +261,7 @@ def make_result(bakery, k=0):
         result['address'] = bakery.address
         result['score'] = bakery.score
         result['review_number'] = bakery.review_number
+        result['breads'] = get_breads(bakery.id)
 
     if k < 1:
         result['lat'] = float(bakery.lat)
