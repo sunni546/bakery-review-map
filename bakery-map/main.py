@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restx import Api
 
+from api.bakery import Bakery_api
 from api.category import Category_api
 from api.level import Level_api
 from api.user import bcrypt, User_api
@@ -36,6 +37,7 @@ api = Api(
 
 api.add_namespace(User_api, '/users')
 api.add_namespace(Level_api, '/levels')
+api.add_namespace(Bakery_api, '/bakeries')
 api.add_namespace(Category_api, '/categories')
 
 if __name__ == '__main__':
