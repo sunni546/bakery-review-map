@@ -188,3 +188,14 @@ def get_category_name(category_id):
 
     except Exception as e:
         print(e)
+
+
+def get_category_id(category_name):
+    print(category_name)
+
+    try:
+        category = Category.query.filter_by(name=category_name).with_entities(Category.id).first()
+        return category.id
+
+    except Exception as e:
+        print(e)

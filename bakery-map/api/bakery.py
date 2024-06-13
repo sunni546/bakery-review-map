@@ -1,7 +1,8 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
-from api.bread import get_breads
+from api.bread import get_breads_category_names, get_breads_bakery_ids
+from api.category import get_category_id
 from models import Bakery, db
 
 Bakery_api = Namespace(name='Bakery_api', description="API for managing bakeries")
@@ -210,7 +211,7 @@ class BakeryRUD(Resource):
 
 
 @Bakery_api.route('/location')
-class BakeryR(Resource):
+class BakeryP(Resource):
     def post(self):
         """
           Get a bakery with location(lat and lng).
@@ -251,6 +252,86 @@ class BakeryR(Resource):
         return jsonify(result)
 
 
+@Bakery_api.route('/category/<string:category>')
+@Bakery_api.doc(params={'category': 'Category ID or name'})
+class BakeryR(Resource):
+    def get(self, category):
+        """
+          Get all bakeries with category ID or name.
+        """
+        """
+          Request:
+            GET /bakeries/category/2
+            or
+            GET /bakeries/category/소금빵
+          Returns:
+            [
+              {
+                "id": 1,
+                "name": "파리바게뜨 부천중동로데오점",
+                "address": "경기 부천시 원미구 소향로 251",
+                "score": 0,
+                "review_number": 0,
+                "breads": [
+                  "베이글",
+                  "소금빵"
+                ]
+              },
+              {
+                "id": 2,
+                "name": "비플로우",
+                "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
+                "score": 0,
+                "review_number": 0,
+                "breads": [
+                  "소금빵"
+                ]
+              },
+              ...
+            ]
+            or
+            [
+              {
+                "id": 1,
+                "name": "파리바게뜨 부천중동로데오점",
+                "lat": 37.5008651,
+                "lng": 126.7758115
+              },
+              {
+                "id": 2,
+                "name": "비플로우",
+                "lat": 37.4954714,
+                "lng": 126.7763733
+              },
+              ...
+            ]
+        """
+        print(category)
+
+        result = []
+
+        try:
+            if category.isdecimal():
+                ids = get_breads_bakery_ids(int(category))
+
+                for id in ids:
+                    bakery = db.session.get(Bakery, id)
+                    result.append(make_result(bakery, 1))
+
+            else:
+                category_id = get_category_id(category)
+                ids = get_breads_bakery_ids(category_id)
+
+                for id in ids:
+                    bakery = db.session.get(Bakery, id)
+                    result.append(make_result(bakery, -1))
+
+        except Exception as e:
+            print(e)
+
+        return jsonify(result)
+
+
 def make_result(bakery, k=0):
     result = {
         'id': bakery.id,
@@ -261,7 +342,7 @@ def make_result(bakery, k=0):
         result['address'] = bakery.address
         result['score'] = bakery.score
         result['review_number'] = bakery.review_number
-        result['breads'] = get_breads(bakery.id)
+        result['breads'] = get_breads_category_names(bakery.id)
 
     if k < 1:
         result['lat'] = float(bakery.lat)
