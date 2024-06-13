@@ -135,7 +135,7 @@ class LevelRUD(Resource):
         point = request.json.get('point')
         print(id, name, point)
 
-        if not name or not point:
+        if not name and not point:
             return jsonify({'result': "수정 실패", 'message': "수정할 내용을 입력해주세요."})
 
         try:

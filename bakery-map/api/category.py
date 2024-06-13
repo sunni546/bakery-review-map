@@ -125,11 +125,15 @@ class CategoryRUD(Resource):
         name = request.json.get('name')
         print(id, name)
 
+        if not name:
+            return jsonify({'result': "수정 실패", 'message': "수정할 내용을 입력해주세요."})
+
         try:
             category = db.session.get(Category, id)
 
-            category.name = name
-            db.session.commit()
+            if category.name != name:
+                category.name = name
+                db.session.commit()
 
             result = make_result(category)
 

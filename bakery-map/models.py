@@ -34,6 +34,22 @@ class Level(db.Model):
         return f"Level(id={self.id!r}, name={self.name!r}, point={self.point!r})"
 
 
+class Bakery(db.Model):
+    __tablename__ = 'bakeries'
+
+    id = db.Column(db.Integer, primary_key=True, comment="빵집 번호")
+    name = db.Column(db.String(64), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    lat = db.Column(db.Numeric(10, 7), nullable=False)
+    lng = db.Column(db.Numeric(10, 7), nullable=False)
+    score = db.Column(db.Float, default=0)
+    review_number = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return (f"Bakery(id={self.id!r}, name={self.name!r}, address={self.address!r}, "
+                f"lat={self.lat!r}, lng={self.lng!r}, score={self.score!r}, review_number={self.review_number!r})")
+
+
 class Category(db.Model):
     __tablename__ = 'categories'
 
