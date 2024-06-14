@@ -3,7 +3,9 @@ from flask_restx import Namespace, Resource
 
 from api.bread import get_breads_category_names, get_breads_bakery_ids
 from api.category import get_category_id
+from api.interest import is_interested
 from models import Bakery, db
+from my_jwt import validate_token, get_user_id
 
 Bakery_api = Namespace(name='Bakery_api', description="API for managing bakeries")
 
@@ -21,23 +23,33 @@ class BakeryCR(Resource):
                 "id": 1,
                 "name": "파리바게뜨 부천중동로데오점",
                 "lat": 37.5008651,
-                "lng": 126.7758115
+                "lng": 126.7758115,
+                "interest": true
               },
               {
                 "id": 2,
                 "name": "비플로우",
                 "lat": 37.4954714,
-                "lng": 126.7763733
+                "lng": 126.7763733,
+                "interest": false
               },
               ...
             ]
         """
+        token = request.headers.get('Authorization')
+
+        if not validate_token(token):
+            return jsonify({'result': "로그인 실패", 'message': "올바르지 않은 JWT입니다."})
+
+        user_id = get_user_id(token)
+        print(user_id)
+
         result = []
 
         try:
             bakeries = Bakery.query.all()
             for bakery in bakeries:
-                result.append(make_result(bakery, -1))
+                result.append(make_result(bakery, user_id, -1))
 
         except Exception as e:
             print(e)
@@ -109,15 +121,22 @@ class BakeryRUD(Resource):
               "breads": [
                 "베이글",
                 "소금빵"
-              ]
+              ],
+              "interest": true
             }
         """
-        print(id)
+        token = request.headers.get('Authorization')
+
+        if not validate_token(token):
+            return jsonify({'result': "로그인 실패", 'message': "올바르지 않은 JWT입니다."})
+
+        user_id = get_user_id(token)
+        print(id, user_id)
 
         try:
             bakery = db.session.get(Bakery, id)
 
-            result = make_result(bakery, 1)
+            result = make_result(bakery, user_id, 1)
 
         except Exception as e:
             print(e)
@@ -233,17 +252,25 @@ class BakeryP(Resource):
               "breads": [
                 "베이글",
                 "소금빵"
-              ]
+              ],
+              "interest": true
             }
         """
+        token = request.headers.get('Authorization')
+
+        if not validate_token(token):
+            return jsonify({'result': "로그인 실패", 'message': "올바르지 않은 JWT입니다."})
+
+        user_id = get_user_id(token)
+
         lat = request.json.get('lat')
         lng = request.json.get('lng')
-        print(lat, lng)
+        print(user_id, lat, lng)
 
         try:
             bakery = Bakery.query.filter_by(lat=lat, lng=lng).first()
 
-            result = make_result(bakery, 1)
+            result = make_result(bakery, user_id, 1)
 
         except Exception as e:
             print(e)
@@ -275,7 +302,8 @@ class BakeryR(Resource):
                 "breads": [
                   "베이글",
                   "소금빵"
-                ]
+                ],
+                "interest": true
               },
               {
                 "id": 2,
@@ -285,7 +313,8 @@ class BakeryR(Resource):
                 "review_number": 0,
                 "breads": [
                   "소금빵"
-                ]
+                ],
+                "interest": false
               },
               ...
             ]
@@ -295,18 +324,26 @@ class BakeryR(Resource):
                 "id": 1,
                 "name": "파리바게뜨 부천중동로데오점",
                 "lat": 37.5008651,
-                "lng": 126.7758115
+                "lng": 126.7758115,
+                "interest": true
               },
               {
                 "id": 2,
                 "name": "비플로우",
                 "lat": 37.4954714,
-                "lng": 126.7763733
+                "lng": 126.7763733,
+                "interest": false
               },
               ...
             ]
         """
-        print(category)
+        token = request.headers.get('Authorization')
+
+        if not validate_token(token):
+            return jsonify({'result': "로그인 실패", 'message': "올바르지 않은 JWT입니다."})
+
+        user_id = get_user_id(token)
+        print(category, user_id)
 
         result = []
 
@@ -316,7 +353,7 @@ class BakeryR(Resource):
 
                 for id in ids:
                     bakery = db.session.get(Bakery, id)
-                    result.append(make_result(bakery, 1))
+                    result.append(make_result(bakery, user_id, 1))
 
             else:
                 category_id = get_category_id(category)
@@ -324,7 +361,7 @@ class BakeryR(Resource):
 
                 for id in ids:
                     bakery = db.session.get(Bakery, id)
-                    result.append(make_result(bakery, -1))
+                    result.append(make_result(bakery, user_id, -1))
 
         except Exception as e:
             print(e)
@@ -332,7 +369,7 @@ class BakeryR(Resource):
         return jsonify(result)
 
 
-def make_result(bakery, k=0):
+def make_result(bakery, user_id=0, k=0):
     result = {
         'id': bakery.id,
         'name': bakery.name
@@ -347,6 +384,9 @@ def make_result(bakery, k=0):
     if k < 1:
         result['lat'] = float(bakery.lat)
         result['lng'] = float(bakery.lng)
+
+    if k and user_id:
+        result['interest'] = is_interested(bakery.id, user_id)
 
     return result
 
