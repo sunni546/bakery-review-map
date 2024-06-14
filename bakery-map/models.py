@@ -3,6 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class Level(db.Model):
+    __tablename__ = 'levels'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), unique=True, nullable=False)
+    point = db.Column(db.Integer, unique=True, nullable=False)
+
+    users = db.relationship("User", back_populates="level")
+
+    def __repr__(self):
+        return f"Level(id={self.id!r}, name={self.name!r}, point={self.point!r})"
+
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -16,22 +29,26 @@ class User(db.Model):
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
     level = db.relationship("Level", back_populates="users")
 
+    interests = db.relationship("Interest", back_populates="user")
+
     def __repr__(self):
         return (f"User(id={self.id!r}, email={self.email!r}, password={self.password!r}, nickname={self.nickname!r}, "
                 f"image={self.image!r}, point={self.point!r}, level_id={self.level_id!r})")
 
 
-class Level(db.Model):
-    __tablename__ = 'levels'
+class Interest(db.Model):
+    __tablename__ = 'interests'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), unique=True, nullable=False)
-    point = db.Column(db.Integer, unique=True, nullable=False)
 
-    users = db.relationship("User", back_populates="level")
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id'))
+    bakery = db.relationship("Bakery", back_populates="interests")
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates="interests")
 
     def __repr__(self):
-        return f"Level(id={self.id!r}, name={self.name!r}, point={self.point!r})"
+        return f"Interest(id={self.id!r}, bakery_id={self.bakery_id!r}, user_id={self.user_id!r})"
 
 
 class Bakery(db.Model):
@@ -46,6 +63,7 @@ class Bakery(db.Model):
     review_number = db.Column(db.Integer, default=0)
 
     breads = db.relationship("Bread", back_populates="bakery")
+    interests = db.relationship("Interest", back_populates="bakery")
 
     def __repr__(self):
         return (f"Bakery(id={self.id!r}, name={self.name!r}, address={self.address!r}, "
