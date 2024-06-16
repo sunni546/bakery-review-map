@@ -150,3 +150,27 @@ class Login(Resource):
             result = {'result': "로그인 실패"}
 
         return jsonify(result)
+
+
+def plus_point(user_id, point):
+    print(user_id, point)
+
+    try:
+        user = db.session.get(User, user_id)
+        user.point += point
+
+    except Exception as e:
+        print(e)
+        return e
+
+
+def minus_point(user_id, point):
+    print(user_id, point)
+
+    try:
+        user = db.session.get(User, user_id)
+        user.point -= point
+
+    except Exception as e:
+        print(e)
+        return e
