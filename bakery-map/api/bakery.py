@@ -400,10 +400,9 @@ def add_review(bakery_id, review_score):
         bakery.score = (bakery.score * bakery.review_number + review_score) / (bakery.review_number + 1)
         bakery.review_number += 1
 
-        db.session.commit()
-
     except Exception as e:
         print(e)
+        return e
 
 
 def delete_review(bakery_id, review_score):
@@ -415,7 +414,19 @@ def delete_review(bakery_id, review_score):
         bakery.score = (bakery.score * bakery.review_number - review_score) / (bakery.review_number - 1)
         bakery.review_number -= 1
 
-        db.session.commit()
+    except Exception as e:
+        print(e)
+        return e
+
+
+def change_review_score(bakery_id, review_score, new_score):
+    print(bakery_id, review_score, new_score)
+
+    try:
+        bakery = db.session.get(Bakery, bakery_id)
+
+        bakery.score = (bakery.score * bakery.review_number - review_score + new_score) / bakery.review_number
 
     except Exception as e:
         print(e)
+        return e

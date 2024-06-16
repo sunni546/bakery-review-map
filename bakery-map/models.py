@@ -30,6 +30,7 @@ class User(db.Model):
     level = db.relationship("Level", back_populates="users")
 
     interests = db.relationship("Interest", back_populates="user")
+    reviews = db.relationship("Review", back_populates="user")
 
     def __repr__(self):
         return (f"User(id={self.id!r}, email={self.email!r}, password={self.password!r}, nickname={self.nickname!r}, "
@@ -51,6 +52,25 @@ class Interest(db.Model):
         return f"Interest(id={self.id!r}, bakery_id={self.bakery_id!r}, user_id={self.user_id!r})"
 
 
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(255), nullable=False)
+    image = db.Column(db.String(255))
+    score = db.Column(db.Integer, nullable=False)
+
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id'))
+    bakery = db.relationship("Bakery", back_populates="reviews")
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates="reviews")
+
+    def __repr__(self):
+        return (f"Review(id={self.id!r}, content={self.content!r}, image={self.image!r}, score={self.score!r}, "
+                f"bakery_id={self.bakery_id!r}, user_id={self.user_id!r})")
+
+
 class Bakery(db.Model):
     __tablename__ = 'bakeries'
 
@@ -64,6 +84,7 @@ class Bakery(db.Model):
 
     breads = db.relationship("Bread", back_populates="bakery")
     interests = db.relationship("Interest", back_populates="bakery")
+    reviews = db.relationship("Review", back_populates="bakery")
 
     def __repr__(self):
         return (f"Bakery(id={self.id!r}, name={self.name!r}, address={self.address!r}, "
