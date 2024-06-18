@@ -23,16 +23,14 @@ class ReviewCR(Resource):
                 "content": "베이글 좋아요",
                 "image": "review1",
                 "score": 5,
-                "bakery_id": 1,
-                "user_id": 1
+                "bakery_id": 1
               },
               {
                 "id": 2,
                 "content": "소금빵 좋아요",
                 "image": null,
                 "score": 4,
-                "bakery_id": 2,
-                "user_id": 1
+                "bakery_id": 2
               },
               ...
             ]
@@ -67,6 +65,7 @@ class ReviewCR(Resource):
               "content": "베이글 좋아요",
               "image": "review1",
               "score": 5,
+              "categories": [1],
               "bakery_id": 1
             }
           Returns:
@@ -75,8 +74,7 @@ class ReviewCR(Resource):
               "content": "베이글 좋아요",
               "image": "review1",
               "score": 5,
-              "bakery_id": 1,
-              "user_id": 1
+              "bakery_id": 1
             }
         """
         token = request.headers.get('Authorization')
@@ -129,8 +127,7 @@ class ReviewRUD(Resource):
               "content": "베이글 좋아요",
               "image": "review1",
               "score": 5,
-              "bakery_id": 1,
-              "user_id": 1
+              "bakery_id": 1
             }
         """
         token = request.headers.get('Authorization')
@@ -172,8 +169,7 @@ class ReviewRUD(Resource):
               "content": "소금빵 좋아요",
               "image": null,
               "score": 4,
-              "bakery_id": 2,
-              "user_id": 1
+              "bakery_id": 2
             }
         """
         token = request.headers.get('Authorization')
@@ -261,8 +257,7 @@ def make_result(review):
         'content': review.content,
         'image': review.image,
         'score': review.score,
-        'bakery_id': review.bakery_id,
-        'user_id': review.user_id
+        'bakery_id': review.bakery_id
     }
 
     return result

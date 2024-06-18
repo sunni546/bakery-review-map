@@ -1,7 +1,6 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
-from api.category import get_category_name
 from models import Bread, db
 
 Bread_api = Namespace(name='Bread_api', description="API for managing breads")
@@ -130,6 +129,7 @@ def get_breads_category_names(bakery_id):
         breads = Bread.query.filter_by(bakery_id=bakery_id).with_entities(Bread.category_id).all()
 
         for bread in breads:
+            from api.category import get_category_name
             category_name = get_category_name(bread.category_id)
 
             category_names.append(category_name)
