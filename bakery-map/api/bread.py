@@ -120,7 +120,7 @@ def make_result(bread):
     return result
 
 
-def get_breads_category_names(bakery_id):
+def get_category_names_in_breads(bakery_id):
     print(bakery_id)
 
     category_names = []
@@ -135,23 +135,6 @@ def get_breads_category_names(bakery_id):
             category_names.append(category_name)
 
         return category_names
-
-    except Exception as e:
-        print(e)
-
-
-def get_bakery_ids_in_breads(category_id):
-    print(category_id)
-
-    bakery_ids = []
-
-    try:
-        breads = Bread.query.filter_by(category_id=category_id).with_entities(Bread.bakery_id).all()
-
-        for bread in breads:
-            bakery_ids.append(bread.bakery_id)
-
-        return bakery_ids
 
     except Exception as e:
         print(e)
