@@ -140,7 +140,7 @@ def get_breads_category_names(bakery_id):
         print(e)
 
 
-def get_breads_bakery_ids(category_id):
+def get_bakery_ids_in_breads(category_id):
     print(category_id)
 
     bakery_ids = []
