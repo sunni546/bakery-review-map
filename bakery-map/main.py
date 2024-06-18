@@ -8,6 +8,7 @@ from api.category import Category_api
 from api.interest import Interest_api
 from api.level import Level_api
 from api.review import Review_api
+from api.reviewed_bread import ReviewedBread_api
 from api.user import bcrypt, User_api
 from config import Config
 from models import db
@@ -42,6 +43,7 @@ api.add_namespace(Level_api, '/levels')
 api.add_namespace(User_api, '/users')
 api.add_namespace(Interest_api, '/interests')
 api.add_namespace(Review_api, '/reviews')
+api.add_namespace(ReviewedBread_api, '/reviewed_breads')
 api.add_namespace(Bakery_api, '/bakeries')
 api.add_namespace(Bread_api, '/breads')
 api.add_namespace(Category_api, '/categories')

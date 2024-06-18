@@ -557,7 +557,11 @@ def subtract_review_score(bakery_id, review_score):
     try:
         bakery = db.session.get(Bakery, bakery_id)
 
-        bakery.score = (bakery.score * bakery.review_number - review_score) / (bakery.review_number - 1)
+        if bakery.review_number - 1 > 0:
+            bakery.score = (bakery.score * bakery.review_number - review_score) / (bakery.review_number - 1)
+        else:
+            bakery.score = 0
+
         bakery.review_number -= 1
 
     except Exception as e:

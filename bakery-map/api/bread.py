@@ -32,6 +32,7 @@ class BreadCR(Resource):
 
         try:
             breads = Bread.query.all()
+
             for bread in breads:
                 result.append(make_result(bread))
 
