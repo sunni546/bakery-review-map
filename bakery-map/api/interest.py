@@ -19,12 +19,21 @@ class InterestCR(Resource):
               {
                 "id": 1,
                 "bakery_id": 1,
-                "user_id": 1
+                "bakery_name": "파리바게뜨 부천중동로데오점",
+                "bakery_score": 3.0,
+                "breads": [
+                  "베이글",
+                  "소금빵"
+                ]
               },
               {
                 "id": 2,
                 "bakery_id": 2,
-                "user_id": 1
+                "bakery_name": "비플로우",
+                "bakery_score": 4.0,
+                "breads": [
+                  "소금빵"
+                ]
               },
               ...
             ]
@@ -42,7 +51,15 @@ class InterestCR(Resource):
         try:
             interests = Interest.query.filter_by(user_id=user_id).all()
             for interest in interests:
-                result.append(make_result(interest))
+                r = make_result(interest)
+
+                from api.bakery import get_bakery_score, get_bakery_name
+                from api.bread import get_breads_category_names
+                r['bakery_name'] = get_bakery_name(interest.bakery_id)
+                r['bakery_score'] = get_bakery_score(interest.bakery_id)
+                r['breads'] = get_breads_category_names(interest.bakery_id)
+
+                result.append(r)
 
         except Exception as e:
             print(e)
@@ -61,8 +78,7 @@ class InterestCR(Resource):
           Returns:
             {
               "id": 1,
-              "bakery_id": 1,
-              "user_id": 1
+              "bakery_id": 1
             }
         """
         token = request.headers.get('Authorization')
@@ -174,8 +190,7 @@ class InterestWithBakeryIdD(Resource):
 def make_result(interest):
     result = {
         'id': interest.id,
-        'bakery_id': interest.bakery_id,
-        'user_id': interest.user_id
+        'bakery_id': interest.bakery_id
     }
 
     return result

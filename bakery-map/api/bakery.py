@@ -3,7 +3,6 @@ from flask_restx import Namespace, Resource
 
 from api.bread import get_breads_category_names, get_breads_bakery_ids
 from api.category import get_category_id
-from api.interest import is_interested
 from models import Bakery, db
 from my_jwt import validate_token, get_user_id
 
@@ -75,7 +74,7 @@ class BakeryCR(Resource):
               "address": "경기 부천시 원미구 소향로 251",
               "lat": 37.5008651,
               "lng": 126.7758115,
-              "score": 0,
+              "score": 0.0,
               "review_number": 0,
               "breads": []
             }
@@ -116,7 +115,7 @@ class BakeryRUD(Resource):
               "id": 1,
               "name": "파리바게뜨 부천중동로데오점",
               "address": "경기 부천시 원미구 소향로 251",
-              "score": 0,
+              "score": 0.0,
               "review_number": 0,
               "breads": [
                 "베이글",
@@ -164,7 +163,7 @@ class BakeryRUD(Resource):
               "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
               "lat": 37.4954714,
               "lng": 126.7763733,
-              "score": 0,
+              "score": 0.0,
               "review_number": 0,
               "breads": [
                 "소금빵"
@@ -247,7 +246,7 @@ class BakeryP(Resource):
               "id": 1,
               "name": "파리바게뜨 부천중동로데오점",
               "address": "경기 부천시 원미구 소향로 251",
-              "score": 0,
+              "score": 0.0,
               "review_number": 0,
               "breads": [
                 "베이글",
@@ -297,7 +296,7 @@ class BakeryR(Resource):
                 "id": 1,
                 "name": "파리바게뜨 부천중동로데오점",
                 "address": "경기 부천시 원미구 소향로 251",
-                "score": 0,
+                "score": 0.0,
                 "review_number": 0,
                 "breads": [
                   "베이글",
@@ -309,7 +308,7 @@ class BakeryR(Resource):
                 "id": 2,
                 "name": "비플로우",
                 "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
-                "score": 0,
+                "score": 0.0,
                 "review_number": 0,
                 "breads": [
                   "소금빵"
@@ -386,6 +385,7 @@ def make_result(bakery, user_id=0, k=0):
         result['lng'] = float(bakery.lng)
 
     if k and user_id:
+        from api.interest import is_interested
         result['interest'] = is_interested(bakery.id, user_id)
 
     return result
@@ -430,3 +430,27 @@ def change_review_score(bakery_id, review_score, new_score):
     except Exception as e:
         print(e)
         return e
+
+
+def get_bakery_name(bakery_id):
+    print(bakery_id)
+
+    try:
+        bakery = db.session.get(Bakery, bakery_id)
+
+        return bakery.name
+
+    except Exception as e:
+        print(e)
+
+
+def get_bakery_score(bakery_id):
+    print(bakery_id)
+
+    try:
+        bakery = db.session.get(Bakery, bakery_id)
+
+        return bakery.score
+
+    except Exception as e:
+        print(e)
