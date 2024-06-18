@@ -1,8 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
-from api.bread import get_breads_category_names, get_breads_bakery_ids
-from api.category import get_category_id
+from api.bread import get_breads_category_names, get_bakery_ids_in_breads
 from models import Bakery, db
 from my_jwt import validate_token, get_user_id
 
@@ -278,46 +277,17 @@ class BakeryP(Resource):
         return jsonify(result)
 
 
-@Bakery_api.route('/category/<string:category>')
-@Bakery_api.doc(params={'category': 'Category ID or name'})
+@Bakery_api.route('/category/<int:id>')
+@Bakery_api.doc(params={'id': 'Category ID'})
 class BakeryR(Resource):
-    def get(self, category):
+    def get(self, id):
         """
-          Get all bakeries with category ID or name.
+          Get all bakeries with category ID.
         """
         """
           Request:
             GET /bakeries/category/2
-            or
-            GET /bakeries/category/소금빵
           Returns:
-            [
-              {
-                "id": 1,
-                "name": "파리바게뜨 부천중동로데오점",
-                "address": "경기 부천시 원미구 소향로 251",
-                "score": 0.0,
-                "review_number": 0,
-                "breads": [
-                  "베이글",
-                  "소금빵"
-                ],
-                "interest": true
-              },
-              {
-                "id": 2,
-                "name": "비플로우",
-                "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
-                "score": 0.0,
-                "review_number": 0,
-                "breads": [
-                  "소금빵"
-                ],
-                "interest": false
-              },
-              ...
-            ]
-            or
             [
               {
                 "id": 1,
@@ -342,25 +312,16 @@ class BakeryR(Resource):
             return jsonify({'result': "로그인 실패", 'message': "올바르지 않은 JWT입니다."})
 
         user_id = get_user_id(token)
-        print(category, user_id)
+        print(id, user_id)
 
         result = []
 
         try:
-            if category.isdecimal():
-                ids = get_breads_bakery_ids(int(category))
+            bakery_ids = get_bakery_ids_in_breads(id)
 
-                for id in ids:
-                    bakery = db.session.get(Bakery, id)
-                    result.append(make_result(bakery, user_id, 1))
-
-            else:
-                category_id = get_category_id(category)
-                ids = get_breads_bakery_ids(category_id)
-
-                for id in ids:
-                    bakery = db.session.get(Bakery, id)
-                    result.append(make_result(bakery, user_id, -1))
+            for bakery_id in bakery_ids:
+                bakery = db.session.get(Bakery, bakery_id)
+                result.append(make_result(bakery, user_id, -1))
 
         except Exception as e:
             print(e)
