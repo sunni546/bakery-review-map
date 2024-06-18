@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
-from api.bakery import add_review, delete_review, change_review_score
+from api.bakery import add_review_score, subtract_review_score, change_review_score
 from api.user import plus_point, minus_point
 from models import Review, db
 from my_jwt import validate_token, get_user_id
@@ -96,7 +96,7 @@ class ReviewCR(Resource):
             else:
                 review = Review(content=content, image=image, score=score, bakery_id=bakery_id, user_id=user_id)
 
-                add_review(bakery_id, score)
+                add_review_score(bakery_id, score)
                 db.session.add(review)
                 plus_point(user_id, 10)
 
@@ -236,7 +236,7 @@ class ReviewRUD(Resource):
             if review.user_id != user_id:
                 return jsonify({'result': "삭제 실패", 'message': "해당 리뷰를 삭제할 권한이 없습니다."})
 
-            delete_review(review.bakery_id, review.score)
+            subtract_review_score(review.bakery_id, review.score)
             db.session.delete(review)
             minus_point(user_id, 10)
 
