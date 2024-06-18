@@ -113,8 +113,8 @@ class BakeryRUD(Resource):
               "id": 1,
               "name": "파리바게뜨 부천중동로데오점",
               "address": "경기 부천시 원미구 소향로 251",
-              "score": 0.0,
-              "review_number": 0,
+              "score": 3.0,
+              "review_number": 2,
               "breads": [
                 "베이글",
                 "소금빵"
@@ -161,8 +161,8 @@ class BakeryRUD(Resource):
               "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
               "lat": 37.4954714,
               "lng": 126.7763733,
-              "score": 0.0,
-              "review_number": 0,
+              "score": 4.0,
+              "review_number": 1,
               "breads": [
                 "소금빵"
               ]
@@ -244,8 +244,8 @@ class BakeryLocationP(Resource):
               "id": 1,
               "name": "파리바게뜨 부천중동로데오점",
               "address": "경기 부천시 원미구 소향로 251",
-              "score": 0.0,
-              "review_number": 0,
+              "score": 3.0,
+              "review_number": 2,
               "breads": [
                 "베이글",
                 "소금빵"
@@ -268,6 +268,73 @@ class BakeryLocationP(Resource):
             bakery = Bakery.query.filter_by(lat=lat, lng=lng).first()
 
             result = make_result(bakery, user_id, 1)
+
+        except Exception as e:
+            print(e)
+            result = {}
+
+        return jsonify(result)
+
+
+@Bakery_api.route('/search')
+class BakerySearchP(Resource):
+    def post(self):
+        """
+          Get all bakeries with name.
+        """
+        """
+          Request:
+            POST /bakeries/search
+            {
+              "name": "파리바게뜨"
+            }
+          Returns:
+            [
+              {
+                "id": 1,
+                "name": "파리바게뜨 부천중동로데오점",
+                "address": "경기 부천시 원미구 소향로 251",
+                "score": 3.0,
+                "review_number": 2,
+                "breads": [
+                  "베이글",
+                  "소금빵"
+                ],
+                "interest": true
+              },
+              {
+                "id": 3,
+                "name": "파리바게뜨 중동그린타운점",
+                "address": "경기 부천시 원미구 부흥로303번길 36",
+                "score": 0.0,
+                "review_number": 0,
+                "breads": [
+                  "베이글",
+                  "소금빵",
+                  "식빵"
+                ],
+                "interest": false
+              },
+              ...
+            ]
+        """
+        token = request.headers.get('Authorization')
+
+        if not validate_token(token):
+            return jsonify({'result': "로그인 실패", 'message': "올바르지 않은 JWT입니다."})
+
+        user_id = get_user_id(token)
+
+        name = request.json.get('name')
+        print(user_id, name)
+
+        result = []
+
+        try:
+            bakeries = Bakery.query.filter(Bakery.name.like(f'%{name}%')).all()
+
+            for bakery in bakeries:
+                result.append(make_result(bakery, user_id, 1))
 
         except Exception as e:
             print(e)
@@ -341,7 +408,7 @@ class BakeryRankingR(Resource):
                 "name": "비플로우",
                 "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
                 "score": 4.0,
-                "review_number": 0,
+                "review_number": 1,
                 "breads": [
                   "소금빵"
                 ],
@@ -352,7 +419,7 @@ class BakeryRankingR(Resource):
                 "name": "파리바게뜨 부천중동로데오점",
                 "address": "경기 부천시 원미구 소향로 251",
                 "score": 3.0,
-                "review_number": 0,
+                "review_number": 2,
                 "breads": [
                   "베이글",
                   "소금빵"
@@ -374,6 +441,7 @@ class BakeryRankingR(Resource):
 
         try:
             bakeries = Bakery.query.order_by(Bakery.score.desc()).all()
+
             for bakery in bakeries:
                 result.append(make_result(bakery, user_id, 1))
 
@@ -400,7 +468,7 @@ class BakeryRankingWithCategoryR(Resource):
                 "name": "비플로우",
                 "address": "경기 부천시 원미구 부흥로307번길 23 태정빌딩 1층 104호",
                 "score": 4.0,
-                "review_number": 0,
+                "review_number": 1,
                 "breads": [
                   "소금빵"
                 ],
@@ -411,7 +479,7 @@ class BakeryRankingWithCategoryR(Resource):
                 "name": "파리바게뜨 부천중동로데오점",
                 "address": "경기 부천시 원미구 소향로 251",
                 "score": 3.0,
-                "review_number": 0,
+                "review_number": 2,
                 "breads": [
                   "베이글",
                   "소금빵"
@@ -469,7 +537,7 @@ def make_result(bakery, user_id=0, k=0):
     return result
 
 
-def add_review(bakery_id, review_score):
+def add_review_score(bakery_id, review_score):
     print(bakery_id, review_score)
 
     try:
@@ -483,7 +551,7 @@ def add_review(bakery_id, review_score):
         return e
 
 
-def delete_review(bakery_id, review_score):
+def subtract_review_score(bakery_id, review_score):
     print(bakery_id, review_score)
 
     try:
