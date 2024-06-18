@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 
-from api.bakery import add_review_score, subtract_review_score, change_review_score
+from api.bakery import add_review_score, subtract_review_score, change_review_score, get_bakery_name
 from api.user import plus_point, minus_point
 from models import Review, db
 from my_jwt import validate_token, get_user_id
@@ -23,14 +23,22 @@ class ReviewCR(Resource):
                 "content": "베이글 좋아요",
                 "image": "review1",
                 "score": 5,
-                "bakery_id": 1
+                "bakery_id": 1,
+                "bakery_name": "파리바게뜨 부천중동로데오점",
+                "breads": [
+                  "베이글"
+                ]
               },
               {
                 "id": 2,
                 "content": "소금빵 좋아요",
                 "image": null,
                 "score": 4,
-                "bakery_id": 2
+                "bakery_id": 2,
+                "bakery_name": "비플로우",
+                "breads": [
+                  "소금빵"
+                ]
               },
               ...
             ]
@@ -65,8 +73,8 @@ class ReviewCR(Resource):
               "content": "베이글 좋아요",
               "image": "review1",
               "score": 5,
-              "categories": [1],
-              "bakery_id": 1
+              "bakery_id": 1,
+              "category_ids": [1]
             }
           Returns:
             {
@@ -74,7 +82,11 @@ class ReviewCR(Resource):
               "content": "베이글 좋아요",
               "image": "review1",
               "score": 5,
-              "bakery_id": 1
+              "bakery_id": 1,
+              "bakery_name": "파리바게뜨 부천중동로데오점",
+              "breads": [
+                "베이글"
+              ]
             }
         """
         token = request.headers.get('Authorization')
@@ -86,6 +98,7 @@ class ReviewCR(Resource):
         image = request.json.get('image')
         score = request.json.get('score')
         bakery_id = request.json.get('bakery_id')
+        category_ids = request.json.get('category_ids')
         user_id = get_user_id(token)
         print(bakery_id, user_id)
 
@@ -96,8 +109,12 @@ class ReviewCR(Resource):
             else:
                 review = Review(content=content, image=image, score=score, bakery_id=bakery_id, user_id=user_id)
 
-                add_review_score(bakery_id, score)
                 db.session.add(review)
+
+                from api.reviewed_bread import set_category_in_reviewed_breads
+                set_category_in_reviewed_breads(review.id, category_ids)
+
+                add_review_score(bakery_id, score)
                 plus_point(user_id, 10)
 
                 db.session.commit()
@@ -127,7 +144,11 @@ class ReviewRUD(Resource):
               "content": "베이글 좋아요",
               "image": "review1",
               "score": 5,
-              "bakery_id": 1
+              "bakery_id": 1,
+              "bakery_name": "파리바게뜨 부천중동로데오점",
+              "breads": [
+                "베이글"
+              ]
             }
         """
         token = request.headers.get('Authorization')
@@ -169,7 +190,11 @@ class ReviewRUD(Resource):
               "content": "소금빵 좋아요",
               "image": null,
               "score": 4,
-              "bakery_id": 2
+              "bakery_id": 2,
+              "bakery_name": "비플로우",
+              "breads": [
+                "소금빵"
+              ]
             }
         """
         token = request.headers.get('Authorization')
@@ -237,9 +262,9 @@ class ReviewRUD(Resource):
                 return jsonify({'result': "삭제 실패", 'message': "해당 리뷰를 삭제할 권한이 없습니다."})
 
             subtract_review_score(review.bakery_id, review.score)
-            db.session.delete(review)
             minus_point(user_id, 10)
 
+            db.session.delete(review)
             db.session.commit()
 
             result = {}
@@ -252,12 +277,16 @@ class ReviewRUD(Resource):
 
 
 def make_result(review):
+    from api.reviewed_bread import get_category_names_in_reviewed_breads
+
     result = {
         'id': review.id,
         'content': review.content,
         'image': review.image,
         'score': review.score,
-        'bakery_id': review.bakery_id
+        'bakery_id': review.bakery_id,
+        'bakery_name': get_bakery_name(review.bakery_id),
+        'breads': get_category_names_in_reviewed_breads(review.id)
     }
 
     return result

@@ -29,8 +29,8 @@ class User(db.Model):
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
     level = db.relationship("Level", back_populates="users")
 
-    interests = db.relationship("Interest", back_populates="user")
-    reviews = db.relationship("Review", back_populates="user")
+    interests = db.relationship("Interest", back_populates="user", cascade="all, delete-orphan")
+    reviews = db.relationship("Review", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return (f"User(id={self.id!r}, email={self.email!r}, password={self.password!r}, nickname={self.nickname!r}, "
@@ -42,10 +42,10 @@ class Interest(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id'))
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id', ondelete="CASCADE"))
     bakery = db.relationship("Bakery", back_populates="interests")
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     user = db.relationship("User", back_populates="interests")
 
     def __repr__(self):
@@ -60,15 +60,32 @@ class Review(db.Model):
     image = db.Column(db.String(255))
     score = db.Column(db.Integer, nullable=False)
 
-    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id'))
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id', ondelete="CASCADE"))
     bakery = db.relationship("Bakery", back_populates="reviews")
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     user = db.relationship("User", back_populates="reviews")
+
+    reviewed_breads = db.relationship("ReviewedBread", back_populates="review", cascade="all, delete-orphan")
 
     def __repr__(self):
         return (f"Review(id={self.id!r}, content={self.content!r}, image={self.image!r}, score={self.score!r}, "
                 f"bakery_id={self.bakery_id!r}, user_id={self.user_id!r})")
+
+
+class ReviewedBread(db.Model):
+    __tablename__ = 'reviewed_breads'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id', ondelete="CASCADE"))
+    review = db.relationship("Review", back_populates="reviewed_breads")
+
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id', ondelete="CASCADE"))
+    category = db.relationship("Category", back_populates="reviewed_breads")
+
+    def __repr__(self):
+        return f"ReviewedBread(id={self.id!r}, review_id={self.review_id!r}, category_id={self.category_id!r})"
 
 
 class Bakery(db.Model):
@@ -82,9 +99,9 @@ class Bakery(db.Model):
     score = db.Column(db.Float, default=0)
     review_number = db.Column(db.Integer, default=0)
 
-    breads = db.relationship("Bread", back_populates="bakery")
-    interests = db.relationship("Interest", back_populates="bakery")
-    reviews = db.relationship("Review", back_populates="bakery")
+    breads = db.relationship("Bread", back_populates="bakery", cascade="all, delete-orphan")
+    interests = db.relationship("Interest", back_populates="bakery", cascade="all, delete-orphan")
+    reviews = db.relationship("Review", back_populates="bakery", cascade="all, delete-orphan")
 
     def __repr__(self):
         return (f"Bakery(id={self.id!r}, name={self.name!r}, address={self.address!r}, "
@@ -96,10 +113,10 @@ class Bread(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id'))
+    bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id', ondelete="CASCADE"))
     bakery = db.relationship("Bakery", back_populates="breads")
 
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id', ondelete="CASCADE"))
     category = db.relationship("Category", back_populates="breads")
 
     def __repr__(self):
@@ -112,7 +129,8 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), unique=True, nullable=False)
 
-    breads = db.relationship("Bread", back_populates="category")
+    breads = db.relationship("Bread", back_populates="category", cascade="all, delete-orphan")
+    reviewed_breads = db.relationship("ReviewedBread", back_populates="category", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"Category(id={self.id!r}, name={self.name!r})"
