@@ -110,6 +110,9 @@ class ReviewCR(Resource):
             else:
                 review = Review(content=content, image=image, score=score, bakery_id=bakery_id, user_id=user_id)
 
+                from api.bread import add_category_in_breads
+                add_category_in_breads(bakery_id, category_ids)
+
                 add_review_score(bakery_id, score)
                 plus_point(user_id, 10)
 
@@ -262,6 +265,11 @@ class ReviewRUD(Resource):
 
             if review.user_id != user_id:
                 return jsonify({'result': "삭제 실패", 'message': "해당 리뷰를 삭제할 권한이 없습니다."})
+
+            from api.reviewed_bread import get_categories_in_reviewed_breads
+            from api.bread import delete_category_in_breads
+            categories = get_categories_in_reviewed_breads(id)
+            delete_category_in_breads(review.bakery_id, categories)
 
             subtract_review_score(review.bakery_id, review.score)
             minus_point(user_id, 10)

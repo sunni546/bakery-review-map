@@ -42,36 +42,6 @@ class ReviewedBreadR(Resource):
         return jsonify(result)
 
 
-@ReviewedBread_api.route('/<int:id>')
-@ReviewedBread_api.doc(params={'id': 'ReviewedBread ID'})
-class ReviewedBreadD(Resource):
-    def delete(self, id):
-        """
-          Delete reviewed_bread.
-        """
-        """
-          Request:
-            DELETE /reviewed_breads/3
-          Returns:
-            {}
-        """
-        print(id)
-
-        try:
-            reviewed_bread = db.session.get(ReviewedBread, id)
-
-            db.session.delete(reviewed_bread)
-            db.session.commit()
-
-            result = {}
-
-        except Exception as e:
-            print(e)
-            result = {'result': "삭제 실패"}
-
-        return jsonify(result)
-
-
 def make_result(reviewed_bread):
     result = {
         'id': reviewed_bread.id,
@@ -96,6 +66,24 @@ def set_category_in_reviewed_breads(review_id, category_ids):
     except Exception as e:
         print(e)
         return e
+
+
+def get_categories_in_reviewed_breads(review_id):
+    print(review_id)
+
+    category_ids = []
+
+    try:
+        reviewed_breads = (ReviewedBread.query.filter_by(review_id=review_id)
+                           .with_entities(ReviewedBread.category_id).all())
+
+        for reviewed_bread in reviewed_breads:
+            category_ids.append(reviewed_bread.category_id)
+
+        return category_ids
+
+    except Exception as e:
+        print(e)
 
 
 def get_category_names_in_reviewed_breads(review_id):
