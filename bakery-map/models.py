@@ -112,6 +112,7 @@ class Bread(db.Model):
     __tablename__ = 'breads'
 
     id = db.Column(db.Integer, primary_key=True)
+    review_count = db.Column(db.Integer, default=1)
 
     bakery_id = db.Column(db.Integer, db.ForeignKey('bakeries.id', ondelete="CASCADE"))
     bakery = db.relationship("Bakery", back_populates="breads")
@@ -120,7 +121,8 @@ class Bread(db.Model):
     category = db.relationship("Category", back_populates="breads")
 
     def __repr__(self):
-        return f"Bread(id={self.id!r}, bakery_id={self.bakery_id!r}, category_id={self.category_id!r})"
+        return (f"Bread(id={self.id!r}, review_count={self.review_count!r}, "
+                f"bakery_id={self.bakery_id!r}, category_id={self.category_id!r})")
 
 
 class Category(db.Model):
