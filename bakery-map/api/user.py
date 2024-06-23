@@ -157,7 +157,13 @@ def plus_point(user_id, point):
 
     try:
         user = db.session.get(User, user_id)
-        user.point += point
+
+        new_point = user.point + point
+        user.point = new_point
+
+        new_level = get_level(new_point)
+        if user.level_id != new_level:
+            user.level_id = new_level
 
     except Exception as e:
         print(e)
@@ -169,8 +175,38 @@ def minus_point(user_id, point):
 
     try:
         user = db.session.get(User, user_id)
-        user.point -= point
+
+        new_point = user.point - point
+        user.point = new_point
+
+        new_level = get_level(new_point)
+        if user.level_id != new_level:
+            user.level_id = new_level
 
     except Exception as e:
         print(e)
         return e
+
+
+def get_user_nickname(user_id):
+    print(user_id)
+
+    try:
+        user = db.session.get(User, user_id)
+
+        return user.nickname
+
+    except Exception as e:
+        print(e)
+
+
+def get_user_level(user_id):
+    print(user_id)
+
+    try:
+        user = db.session.get(User, user_id)
+
+        return get_level_name(user.level_id)
+
+    except Exception as e:
+        print(e)

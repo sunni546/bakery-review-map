@@ -91,6 +91,8 @@ def set_category_in_reviewed_breads(review_id, category_ids):
 
             db.session.add(reviewed_bread)
 
+        db.session.commit()
+
     except Exception as e:
         print(e)
         return e
