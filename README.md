@@ -1,5 +1,9 @@
 # 빵집 리뷰 지도(가제)
 지도에서 사용자들이 빵집을 선택하여 리뷰를 남기고 모두가 공유하는 웹 서비스
+<br><br>
+- 팀원
+    - Frontend : [iamgyu](https://github.com/iamgyu)
+    - Backend : [sunni546](https://github.com/sunni546)
 
 ## 사용하는 기술 스택
 - Python 3.9
