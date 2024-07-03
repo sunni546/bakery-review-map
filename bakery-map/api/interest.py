@@ -54,10 +54,10 @@ class InterestCR(Resource):
                 r = make_result(interest)
 
                 from api.bakery import get_bakery_score, get_bakery_name
-                from api.bread import get_breads_category_names
+                from api.bread import get_category_names_in_breads
                 r['bakery_name'] = get_bakery_name(interest.bakery_id)
-                r['bakery_score'] = get_bakery_score(interest.bakery_id)
-                r['breads'] = get_breads_category_names(interest.bakery_id)
+                r['bakery_score'] = round(get_bakery_score(interest.bakery_id), 1)
+                r['breads'] = get_category_names_in_breads(interest.bakery_id)
 
                 result.append(r)
 

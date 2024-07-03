@@ -520,7 +520,7 @@ def make_result(bakery, user_id=0, k=0):
 
     if k >= 0:
         result['address'] = bakery.address
-        result['score'] = bakery.score
+        result['score'] = round(bakery.score, 1)
         result['review_number'] = bakery.review_number
 
         from api.bread import get_category_names_in_breads
