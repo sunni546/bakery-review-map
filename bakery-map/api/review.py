@@ -18,17 +18,7 @@ class ReviewCR(Resource):
         """
           Returns:
             [
-              {
-                "id": 1,
-                "content": "베이글 좋아요",
-                "image": "review1",
-                "score": 5,
-                "bakery_id": 1,
-                "bakery_name": "파리바게뜨 부천중동로데오점",
-                "breads": [
-                  "베이글"
-                ]
-              },
+              ...
               {
                 "id": 2,
                 "content": "소금빵 좋아요",
@@ -40,7 +30,17 @@ class ReviewCR(Resource):
                   "소금빵"
                 ]
               },
-              ...
+              {
+                "id": 1,
+                "content": "베이글 좋아요",
+                "image": "review1",
+                "score": 5,
+                "bakery_id": 1,
+                "bakery_name": "파리바게뜨 부천중동로데오점",
+                "breads": [
+                  "베이글"
+                ]
+              }
             ]
         """
         token = request.headers.get('Authorization')
@@ -54,7 +54,7 @@ class ReviewCR(Resource):
         result = []
 
         try:
-            reviews = Review.query.filter_by(user_id=user_id).all()
+            reviews = Review.query.filter_by(user_id=user_id).order_by(Review.id.desc()).all()
 
             for review in reviews:
                 result.append(make_result(review, 1))
