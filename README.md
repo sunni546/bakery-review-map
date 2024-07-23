@@ -1,4 +1,5 @@
 # 빵집 탐방 : 리뷰와 지도로 만나는 빵 맛집
+
 사용자들이 지도에서 빵집을 추가하고 선택한 후 리뷰를 작성하여 공유할 수 있는 웹 서비스
 <br>
 - 팀원
@@ -6,6 +7,7 @@
     - Backend : [sunni546](https://github.com/sunni546)
 
 ## 기술 스택
+
 ### Front
 - HTML/CSS
 - JavaScript
@@ -13,6 +15,7 @@
 - Next.js
 - TypeScript
 - kakaomap API
+
 ### Back
 - Python 3.9
 - Flask
@@ -21,14 +24,26 @@
 - REST API
 
 ## 핵심 기능
-- 카카오맵을 연동하여 빵집의 위치와 정보를 지도에 표시합니다.
-- 전체 및 카테고리 별 빵집 검색 및 랭킹을 제공합니다.
-- 빵집 별 개인 페이지를 통해 빵집의 상세 정보와 해당 빵집의 리뷰 작성 및 확인이 가능합니다.
-- 리뷰 작성 시 사용자에게 포인트를 부여하여, 포인트에 따른 레벨 제도가 있습니다.
-- 모든 리뷰 내용에 작성자의 레벨이 표시되고, 각 빵집 리뷰에서 레벨 별로 리뷰를 따로 정렬할 수 있습니다.
-- 마이페이지에서 사용자 정보 및 사용자가 추가한 관심 빵집과 작성한 리뷰를 확인 및 삭제가 가능합니다.
+- 카카오맵을 연동하여 지도에 빵집의 위치 표시 및 단순 정보 제공
+- 전체 및 카테고리 별 빵집 목록 제공 및 빵집 검색
+- 전체 및 카테고리 별 빵집의 랭킹 목록 제공
+- 빵집별 상세 페이지
+    - 빵집의 상세 정보 제공
+    - 해당 빵집의 리뷰 작성 및 확인
+        - 리뷰 작성 완료 시 사용자에게 포인트 부여 (+ 10 point)
+    - 해당 빵집의 리뷰 목록 확인
+        - 모든 리뷰 내용에 작성자의 레벨이 함께 표시
+        - 레벨별로 리뷰 정렬 가능
+- 마이페이지
+    - 사용자 정보 및 레벨 확인
+        - 포인트를 통한 레벨 제도 도입 (ex. 초심자 : 0 point 이상 100 point 미만)
+        - 포인트에 따라 자동으로 레벨 업/다운
+    - 사용자가 추가한 관심 빵집 목록 확인 및 관심 삭제 가능
+    - 작성한 리뷰 목록 확인 및 삭제 가능
+        - 리뷰 삭제 시 사용자의 포인트 차감 (- 10 point)
 
 ## Database
+
 ### ERD
 ![Bakery-Map](</bakery-map-back/Bakery-Map.png>)
 
@@ -111,3 +126,46 @@
 | DELETE | /categories/{id} | '카테고리' 삭제 |
 
 ## 화면별 실행결과
+
+### 회원가입 화면
+![join](</bakery-map-front/UI/join.png>)
+
+### 로그인 화면
+![login](</bakery-map-front/UI/login.png>)
+
+### 메인 화면
+![main](</bakery-map-front/UI/main.png>)
+
+### 빵집 검색 화면
+
+#### 특정 이름이 포함되는 빵집 검색
+![searchName](</bakery-map-front/UI/searchName.png>)
+
+#### 전체 빵집 검색
+![searchAll](</bakery-map-front/UI/searchAll.png>)
+
+#### 특정 카테고리의 전체 빵집 검색 (ex. 크림빵)
+![searchCategory](</bakery-map-front/UI/searchCategory.png>)
+
+### 빵집 랭킹 화면
+
+#### 전체 빵집 랭킹
+![rankingAll](</bakery-map-front/UI/rankingAll.png>)
+
+#### 특정 카테고리의 빵집 랭킹 (ex. 소금빵)
+![rankingCategory](</bakery-map-front/UI/rankingCategory.png>)
+
+### 관심 빵집 화면
+![interest](</bakery-map-front/UI/interest.png>)
+
+### 새로운 빵집 추가 화면
+![addBakery](</bakery-map-front/UI/addBakery.png>)
+
+### 빵집별 상세 정보 화면 (ex. 파리바게트 중동그린타운점)
+![moreInfoBakery](</bakery-map-front/UI/moreInfoBakery.png>)
+
+### 리뷰 작성 화면
+![writeReview](</bakery-map-front/UI/writeReview.png>)
+
+### 마이페이지 화면
+![myPage](</bakery-map-front/UI/myPage.png>)

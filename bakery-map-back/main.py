@@ -33,8 +33,8 @@ authorizations = {'bearer_auth': {
 api = Api(
     app,
     version='0.1',
-    title="Bakery-Map",
-    description="Bakery Map Project.",
+    title="빵집 탐방 : 리뷰와 지도로 만나는 빵 맛집",
+    description="Bakery Review Map Project.",
     terms_url="/",
     authorizations=authorizations
 )
