@@ -4,10 +4,10 @@
 FROM python:3.9.7
 
 # 작업 디렉토리 설정
-WORKDIR /bakery-map
+WORKDIR /bakery-map-back
 
 # 현재 디렉토리로 소스 코드 복사
-COPY . /bakery-map
+COPY . /bakery-map-back
 
 # install python dependencies
 RUN pip install --upgrade pip
