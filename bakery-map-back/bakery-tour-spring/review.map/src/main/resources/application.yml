@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: review.map
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bakerymap?serverTimezone=Asia/Seoul
+    username: bakerytour
+    password: bakerytour
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        # show_sql: true
+        format_sql: true
+
+    database-platform: org.hibernate.dialect.MySQLDialect
