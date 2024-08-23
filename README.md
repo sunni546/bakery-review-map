@@ -52,8 +52,8 @@
 ### levels
 
 | Method | Url          | Decription |
-| ------ | ------------ | ---------- |
-| GET    | /levels/     | 전체 '레벨' 목록 조회 |
+| ------ |--------------| ---------- |
+| GET    | /levels      | 전체 '레벨' 목록 조회 |
 | POST   | /levels      | '레벨' 추가 |
 | GET    | /levels/{id} | 특정 '레벨' 조회 |
 | PATCH  | /levels/{id} | '레벨' 수정 |

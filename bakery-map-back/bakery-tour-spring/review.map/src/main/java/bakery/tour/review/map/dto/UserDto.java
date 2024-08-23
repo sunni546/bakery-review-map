@@ -15,6 +15,6 @@ public class UserDto {
     private String password;
     private String nickname;
     private String image;
-    private int point;
-//    private String levelName;
+    private Integer point;
+    private String level_name;
 }

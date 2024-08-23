@@ -10,9 +10,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @NonNull Optional<User> findById(@NonNull Long id);
-
     Optional<User> findByEmail(String email);
 
     Optional<User> findByNickname(String nickname);
+
+//    @Query("SELECT u FROM User u WHERE u.age >= :age")
+//    List<User> findByAgeGreaterThanEqual(@Param("age") Integer age);
 }

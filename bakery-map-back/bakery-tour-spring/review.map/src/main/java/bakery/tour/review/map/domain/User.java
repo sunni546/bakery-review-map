@@ -28,11 +28,18 @@ public class User {
     private String nickname;
 
     private String image;
-    private int point = 0;
+    private Integer point = 0;
 
-//    @OneToMany(mappedBy = "users")
+    @Enumerated(EnumType.STRING)
+    private Level level = Level.STARTER;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "level_id")
+//    private Level level;
+
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private List<Interest> interests = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "users")
+//
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private List<Review> reviews = new ArrayList<>();
 }

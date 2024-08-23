@@ -1,5 +1,6 @@
 package bakery.tour.review.map.service;
 
+import bakery.tour.review.map.domain.Level;
 import bakery.tour.review.map.domain.User;
 import bakery.tour.review.map.dto.UserDto;
 import bakery.tour.review.map.jwt.JwtTokenProvider;
@@ -38,7 +39,7 @@ public class UserService {
         userDto.setNickname(user.getNickname());
         userDto.setImage(user.getImage());
         userDto.setPoint(user.getPoint());
-        // userDto.setLevelName();
+        userDto.setLevel_name(user.getLevel().getName());
 
         return userDto;
     }
@@ -95,5 +96,26 @@ public class UserService {
         map.put("jwt", jwtTokenProvider.makeJwtToken(user.getId(), authentication));
 
         return map;
+    }
+
+    private void updatePoint(Long id, int point) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User Not Found"));
+
+        int newPoint = user.getPoint() + point;
+        user.setPoint(newPoint);
+
+        user.setLevel(Level.getLevelByPoint(newPoint));
+
+        userRepository.save(user);
+    }
+
+    private String readNickname(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User Not Found"));
+        return user.getNickname();
+    }
+
+    private Level readLevel(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User Not Found"));
+        return user.getLevel();
     }
 }
