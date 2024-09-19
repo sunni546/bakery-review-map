@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bakerymap?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3305/bakerymap?serverTimezone=Asia/Seoul
     username: bakerytour
     password: bakerytour
 
